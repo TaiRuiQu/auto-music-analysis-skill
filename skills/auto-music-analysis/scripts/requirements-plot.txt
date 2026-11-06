@@ -1,0 +1,3 @@
+# Optional for --spectrogram. No pretrained weights.
+-r requirements-basic.txt
+matplotlib>=3.9,<4

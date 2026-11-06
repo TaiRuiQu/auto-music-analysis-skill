@@ -1,0 +1,4 @@
+# Numerical DSP only; no pretrained weights. Use a separate virtual environment.
+librosa==0.11.0
+numpy>=1.26,<3
+scipy>=1.12,<2
