@@ -2,7 +2,7 @@
 
 ## Purpose and scope
 
-The user's [score-text npm package](https://www.npmjs.com/package/score-text) is a multi-part text score CLI for agents. The model composes, arranges, and edits YAML; the program validates musical structure, builds the timeline, engraves the score, and exports files. Use it for numbered notation, guitar accompaniment, piano, drums, and small ensembles, or to assemble symbolic events recovered by analysis tools.
+The user's [score-text npm package](https://www.npmjs.com/package/score-text) is a multi-part text score CLI for agents. The model manually authors every musical event in YAML; the program validates musical structure, builds the timeline, engraves the score, and exports files. Use it for numbered notation, guitar accompaniment, piano, drums, and small ensembles. Follow the mandatory [manual score authoring workflow](../tasks/score-export.md); analysis outputs are evidence for the agent's decisions, not events to import or generate with a script.
 
 Input is UTF-8 `.score.yaml` with notation `version: 1`. Outputs are PDF, SVG, PNG, offline HTML, MIDI, MusicXML, and normalized JSON. The program does not call a model API or infer notes from audio or images. Original composition can start directly; for recordings, first reconcile notes, beats, meter, and uncertainty using [score assembly](../tasks/score-export.md).
 
@@ -112,6 +112,8 @@ Every explicit voice must independently fill its bar. In quarter-note units, bar
 
 Prefer lyric arrays with one item per event, including one item per simultaneous chord event. Use `_` for rests and tied continuations. Separate syllables explicitly, including when writing Chinese lyrics; English syllables may use trailing hyphens such as `Sing-`, `ing`. `~` extends the previous lyric within the same bar; use a tie plus `_` across bars. Do not align lyrics with text-column spacing. Outer `lyrics` overrides event-level `lyric` values.
 
+These are encoding rules, not an alignment procedure. Follow [manual lyric verification and placement](../tasks/score-export.md#manually-verify-and-place-lyrics): verify every character/syllable and its event correspondence, then explicitly write each item. Do not invoke lyric-alignment models, forced alignment, or scripts to populate `lyrics`/`lyric`, or distribute text by counts or order. Choose `_` and `~` only after reviewing the actual rest/continuation; a cross-bar tie is valid only when the pitch is sustained unchanged. Do not change pitches or introduce ties merely to carry a lyric. If the notation format cannot express a verified text setting, preserve that mapping in the review table and disclose the limitation.
+
 Use a `voices` array with stable, unique voice IDs across bars. This is the `vocal` content of a 4/4 bar:
 
 ```yaml
@@ -171,9 +173,9 @@ bars:
 
 ## Model workflow and delivery
 
-1. Establish parts, key, meter, tempo, ranges, and form from the request. Arrange supplied notes directly. Label original additions; keep recording-analysis uncertainty in accompanying prose or event tables rather than unsupported YAML fields.
-2. Write editable YAML by bar. Check each voice's duration, lyric count, guitar strings/frets, sounding harmony, and tempo units after meter changes.
-3. After `validate --json` succeeds, use `inspect` to check the event timeline. Duration diagnostics use quarter-note units: a 6/8 bar should total 3. Repair the identified target while preserving required content.
+1. Establish parts, key, meter, tempo, ranges, and form from the request. Arrange supplied notes directly. For recordings, cross-check every event against complementary evidence and keep the event review table required by [score assembly](../tasks/score-export.md). Label original additions; keep uncertainty outside unsupported YAML fields.
+2. Manually write each note, rest, tie, and individually verified lyric character/syllable into editable YAML by bar and voice. Do not script event generation, import detector MIDI, automatically fill gaps, or use models/scripts to map lyrics onto notes. Check each voice's duration, lyric correspondence as well as count, guitar strings/frets, sounding harmony, and tempo units after meter changes. Review each occurrence before reusing material through `patterns`/`use` or copying bars.
+3. After `validate --json` succeeds, use `inspect` to check the event timeline. Duration diagnostics use quarter-note units: a 6/8 bar should total 3. Repair the identified target by reviewing the source and notation decisions; do not insert automatic rests or stretch notes just to pass validation.
 4. Render PNG and inspect part alignment, lyrics, chord diagrams, ties/slurs, meter changes, and pagination. Multi-page SVG/PNG may create `name-1.png` and similar files; inspect every page using the returned `files` list.
 5. Export the requested formats and deliver YAML plus actual generated files. PDF/HTML includes all pages. MIDI supports pitch/rhythm checking; file generation is not listening validation. MusicXML converts numbered notation into sounding pitches on a staff, and external editors re-engrave it.
 

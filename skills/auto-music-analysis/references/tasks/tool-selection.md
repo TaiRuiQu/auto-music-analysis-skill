@@ -25,7 +25,7 @@ The user's subsequent preference is candidate-first time-signature classificatio
 | Next: melody, bass, and drums interfere with harmony | [audio-separator](../tools/audio-separator.md) | Compare accompaniment/bass/drum evidence with the mix; separation can create artifacts and need not improve results. | [Chords](chords.md), [drums](drums.md) |
 | Next: no direct inspection of disputed transitions | [Sonic Visualiser](../tools/sonic-visualiser.md) | Overlay labels and beat events, loop suspect passages, and save corrections. Requires an actual review action; opening a view alone is not listening validation. | [Review](review.md) |
 | Alternative: local runtime/platform friction or wider chord labels | [Music AI](../tools/music-ai.md), [Klangio](../tools/klangio.md) | Hosted chord/beat outputs may reduce local setup. Verify schemas, meter-change coverage, retention, and cost; uploads require authorization. | [Chords](chords.md), [meter](meter.md) |
-| When notes/scores are requested | [Basic Pitch](../tools/basic-pitch.md), [Omnizart](../tools/omnizart.md), [music21](../tools/music21.md) | Reuse part transcription and symbolic export. These are not substitutes for confirming harmony, beat units, or meter. | [Notes](notes.md), [score](score-export.md) |
+| When notes/scores are requested | [Basic Pitch](../tools/basic-pitch.md), [Omnizart](../tools/omnizart.md), [Sonic Visualiser](../tools/sonic-visualiser.md), [Score Text](../tools/score-text.md) | Use detectors as optional evidence, inspect every event against complementary sources, then manually author the score. Automatic transcription/import/quantization is not a score-authoring path. | [Notes](notes.md), [score](score-export.md) |
 
 ## Evaluate before promoting a backend
 

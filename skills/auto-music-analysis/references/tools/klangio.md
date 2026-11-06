@@ -6,6 +6,6 @@ The overview advertises piano/guitar/bass/vocal transcription, MIDI/MusicXML/PDF
 
 An advertised meter result does not establish support for changing/odd/compound time signatures or a per-section meter map. Confirm these properties and timestamp units with an actual authorized response before promising them.
 
-Follow [setup](../tasks/setup.md) for provider access, audio upload, retention, pricing/quota, and credentials. Do not invent endpoints or token requirements from the overview. Preserve raw responses and separate successful export from musically validated output.
+Follow [setup](../tasks/setup.md) for provider access, audio upload, retention, pricing/quota, and credentials. Do not invent endpoints or token requirements from the overview. Preserve raw responses as candidate evidence. Provider-generated MIDI/MusicXML/PDF must not become the delivered score or be imported as its event source; follow [manual score assembly](../tasks/score-export.md) to cross-check and explicitly author every event. Successful provider export is not musical validation.
 
 Sources: [API overview](https://api-docs.klang.io/), [access request](https://klang.io/api/).
