@@ -1,4 +1,4 @@
 interface:
   display_name: "Music Analysis"
-  short_description: "Analyze music with audio tools and language models"
-  default_prompt: "Use $auto-music-analysis to analyze this recording with available tools and explain the evidence and uncertainty."
+  short_description: "Analyze recordings and arrange music with text scores"
+  default_prompt: "Use $auto-music-analysis to analyze a recording or compose and arrange a Score Text YAML score, then validate and export the requested artifacts with clear evidence and assumptions."

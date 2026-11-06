@@ -1,8 +1,8 @@
 # Auto Music Analysis Skill
 
-A distributable music analysis skill that lets a language model coordinate audio analysis, traditional machine learning, and deep learning tools, then explain their results.
+A distributable music analysis and arrangement skill that lets a language model coordinate audio tools, explain their results, and compose editable scores in plain text with Score Text.
 
-The skill includes a local DSP helper for **BPM/beat estimates, major/minor key candidates, onset timing, and optional spectrograms**. Source separation, pitched transcription, and drum recognition use external tools documented through concise interfaces and official links. Model weights and inference runtimes are not bundled.
+The skill includes a local DSP helper for **global BPM/beat estimates, major/minor key candidates, onset timing, and optional spectrograms**. Separate task guides cover chords, local tempo, meter changes, transcription, and review; tool references describe external candidates and their actual integration status. Model weights and inference runtimes are not bundled.
 
 Intended capabilities include BPM, key and mode, main melody, drum event distribution, instrument transcription, and chord progressions. Availability depends on the integrated tools and the current runtime environment.
 
@@ -11,17 +11,20 @@ Intended capabilities include BPM, key and mode, main melody, drum event distrib
 ```text
 skills/
 └── auto-music-analysis/
-    ├── SKILL.md              Concise runtime instructions and consent rules
+    ├── SKILL.md              Task routing and shared constraints
     ├── agents/openai.yaml    Codex interface metadata
     ├── scripts/              Local analysis helper and dependency lists
-    └── references/tools.md   Usage interfaces and external tool links
+        ├── assets/score-text/    Runnable multi-part Score Text YAML example
+    └── references/
+        ├── tasks/           One workflow per task (chords, tempo, meter, review, ...)
+        └── tools/           One interface/status reference per tool
 
 docs/                            Maintainer documents; excluded from the skill
-├── tool-research.md              Tool research and provider links
+├── tool-research.md              Integration selection and links to tool references
 └── tool-integration.md           Integration planning and development notes
 ```
 
-The distribution unit is the entire `skills/auto-music-analysis/` folder. It contains no research notes, tool selection rationale, audio, model weights, third-party programs, or credentials.
+The distribution unit is the entire `skills/auto-music-analysis/` folder. It includes task-specific process lessons, integration priorities, and linked tool references. Recording-specific experiments and maintainer verification records stay outside it, together with audio, model weights, third-party programs, and credentials.
 
 ## Install with the skills CLI
 
@@ -69,6 +72,16 @@ Example invocation:
 Use $auto-music-analysis to analyze the BPM and chord progression of this recording.
 ```
 
+For text-based composition and arrangement:
+
+```text
+Use $auto-music-analysis and Score Text to arrange a short C-major piece for
+voice, guitar, piano, and drums. Keep editable YAML, validate and preview it,
+then export PDF and MIDI.
+```
+
+The skill has a dedicated [Score Text chapter](skills/auto-music-analysis/SKILL.md#score-text-plain-text-composition-and-engraving) and [program, CLI, and syntax reference](skills/auto-music-analysis/references/tools/score-text.md), covering notes, durations, lyrics, guitar TAB, piano, drums, independent voices, meter/tempo changes, and structured diagnostics. Start from the [runnable ensemble example](skills/auto-music-analysis/assets/score-text/ensemble.score.yaml). The model writes `.score.yaml`, validates it with `score-text validate --json`, checks rendered output, and exports the requested formats. Score Text is an external Node.js 20+ CLI; installing this skill does not install it. Original composition can start directly from text, while audio transcription still needs the analysis workflow.
+
 For local analysis, reuse Python 3.11+ and FFmpeg/ffprobe where available. Review the Python dependency footprint before installing into a separate environment. Installation through `skills` installs instructions and helper files only; it never installs these dependencies or downloads models automatically.
 
 From the installed skill directory, the helper can inspect audio without Python DSP packages:
@@ -83,7 +96,9 @@ After approved dependency setup from `scripts/requirements-basic.txt` (or `scrip
 python scripts/analyze_audio.py analyze "/absolute/path/song.mp3" --output "/absolute/path/new-results" --spectrogram
 ```
 
-Outputs include `analysis.json`, numeric features, and an optional spectrogram with **note names on a logarithmic pitch axis and bar numbers horizontally**. Specify known pulse grouping and bar origin with `--beats-per-bar` and `--first-downbeat`; otherwise the plot visibly labels its assumptions. The destination must be new. Results are estimates: the key baseline only compares major/minor profiles, and generic onsets do not identify drum instruments. See [tool interfaces](skills/auto-music-analysis/references/tools.md) for plot alignment, external separation/transcription, and score export. Linked backends are not claimed as installed or quality-tested.
+Outputs include `analysis.json`, numeric features, and an optional spectrogram with **note names on a logarithmic pitch axis and bar numbers horizontally**. Specify known pulse grouping and bar origin with `--beats-per-bar` and `--first-downbeat`; otherwise the plot visibly labels its assumptions. The destination must be new. See the [local helper interface](skills/auto-music-analysis/references/tools/local-dsp.md) and [plot guidance](skills/auto-music-analysis/references/tasks/spectrograms.md).
+
+The helper has no chord, local-tempo-map, downbeat, or meter-recognition command. Its key baseline compares only major/minor profiles; generic onsets have no drum classes. For the full workflow, start at [the skill's task table](skills/auto-music-analysis/SKILL.md). [Time-signature classification](skills/auto-music-analysis/references/tasks/meter-classification.md) prioritizes a usable preferred signature and alternatives, with explicit heuristic/default status when evidence is incomplete. Review refines the candidate rather than blocking it. [Process lessons and tool priorities](skills/auto-music-analysis/references/tasks/tool-selection.md) explain which existing tools could replace repeated custom DSP and fill the missing rhythm/harmony stages. Documented candidates are not claimed as installed or quality-tested.
 
 ## Packaging
 
@@ -98,9 +113,9 @@ Recipients can extract `auto-music-analysis/` into their skill search directory.
 
 ## Integrating tools
 
-Keep integration planning in [the maintainer guide](docs/tool-integration.md). Keep reusable analysis code and concise invocation instructions in the skill; use temporary scripts for unusual tasks and one-off score cleanup/export.
+Keep execution/validation records in [the maintainer guide](docs/tool-integration.md). Put task workflows in `references/tasks/` and tool-specific interfaces, constraints, official sources, and status in `references/tools/`. Link rather than duplicate them. Use temporary scripts for recording-specific experiments and one-off score cleanup/export.
 
-The [tool research guide](docs/tool-research.md) compares local and hosted candidates. It is not linked from or bundled with the skill. Verification scope and pending backends are tracked in the maintainer guide.
+The [maintainer selection guide](docs/tool-research.md) links to the distributable tool references. Verification scope and pending backends are tracked separately from documentation-only research. Adding a reference does not install a backend or establish its quality.
 
 The skill requires explicit consent before downloading any deep learning weights or downloading/installing heavyweight tools, including packages or first-use commands that fetch models automatically. The agent must first explain the intended download, storage and environment impact, resource needs, and alternatives. Remote audio uploads and paid API jobs also require approval for their scope. Users configure API keys locally or through a secure credential input; keys are not stored in the skill.
 
