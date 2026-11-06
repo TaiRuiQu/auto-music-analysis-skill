@@ -1,0 +1,4 @@
+interface:
+  display_name: "Music Analysis"
+  short_description: "Analyze music with audio tools and language models"
+  default_prompt: "Use $auto-music-analysis to analyze this recording with available tools and explain the evidence and uncertainty."
